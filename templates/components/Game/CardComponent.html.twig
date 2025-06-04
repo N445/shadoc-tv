@@ -1,0 +1,20 @@
+<div{{ attributes.defaults(stimulus_controller('game--card'))  }}>
+<div class="row">
+    <div class="col-md-4">
+        <div class="input-group mb-3">
+
+
+            <select class="form-select players">
+                {% for player in this.players %}
+                    <option value="{{ player.username }}">{{ player.username }}</option>
+                {% endfor %}
+            </select>
+
+
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                Button
+            </button>
+        </div>
+    </div>
+</div>
+</div>
