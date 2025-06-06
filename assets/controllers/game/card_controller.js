@@ -3,6 +3,7 @@ import {getComponent} from '@symfony/ux-live-component';
 import Swal from 'sweetalert2'
 import "tom-select/dist/css/tom-select.bootstrap5.css";
 import TomSelect from "tom-select/base";
+import "./../../styles/game/cards.scss";
 
 
 export default class extends Controller {
@@ -12,43 +13,59 @@ export default class extends Controller {
     async initialize() {
         this.component = await getComponent(this.element);
 
-
-
         new TomSelect(this.element.querySelector('.players'),{
             persist: false,
             createOnBlur: true,
             create: true
-
         });
 
-        this.pv = this.component.valueStore.get('pv');
-
-        this.element.querySelector('.restart').addEventListener('click',()=>{
-            window.location.reload();
-        })
-        this.element.querySelector('.display-all').addEventListener('click',(e)=>{
-            e.target.classList.toggle('active');
-            if(e.target.classList.contains('active')){
-                this.showAll();
-                return;
-            }
-            this.hideAll();
+        this.startPartyform = document.querySelector('form[name="start-party-form"]');
+        this.startPartyform.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            let playerName = this.startPartyform.querySelector('[name="playerName"]').value;
+            this.component.action('startParty', {playerName: playerName});
         })
 
-        this.cardsElements = this.element.querySelectorAll('.game-card-wrapper');
+        this.component.on('render:finished', (component) => {
+            this.bindCard();
+        });
 
-        this.cardsElements.forEach(element => {
-            element.addEventListener('click', () => {
+        // window.addEventListener('game:card:start', () => {
+        //     this.bindCard();
+        // });
+
+        // this.pv = this.component.valueStore.get('pv');
+        //
+        // this.element.querySelector('.restart').addEventListener('click',()=>{
+        //     window.location.reload();
+        // })
+        // this.element.querySelector('.display-all').addEventListener('click',(e)=>{
+        //     e.target.classList.toggle('active');
+        //     if(e.target.classList.contains('active')){
+        //         this.showAll();
+        //         return;
+        //     }
+        //     this.hideAll();
+        // })
+        //
+        // this.cardsElements = this.element.querySelectorAll('.game-card-wrapper');
+    }
+
+    bindCard(){
+        this.cards = this.element.querySelectorAll('.cards .card-wrapper');
+
+        this.cards.forEach(card => {
+            card.addEventListener('click', () => {
                 console.log(this.selectedImages);
                 if (this.selectedImages.length >= 2) {
                     this.hideAll();
                 }
-                element.classList.toggle('visible');
+                card.classList.toggle('visible');
 
-                if (element.classList.contains('visible')) {
-                    this.selectedImages.push(element);
+                if (card.classList.contains('visible')) {
+                    this.selectedImages.push(card);
                 } else {
-                    this.selectedImages = this.selectedImages.filter(e => e !== element);
+                    this.selectedImages = this.selectedImages.filter(e => e !== card);
                 }
 
                 if (this.selectedImages.length === 2) {
@@ -60,7 +77,7 @@ export default class extends Controller {
 
     hideAll() {
         let delay = 0;
-        this.cardsElements.forEach(element => {
+        this.cards.forEach(element => {
             element.classList.remove('visible');
             // setTimeout(() => {
             //     element.classList.remove('visible');
@@ -68,46 +85,45 @@ export default class extends Controller {
             // delay += 50;
         })
         this.selectedImages = [];
-        console.log(this.selectedImages);
     }
-
 
     showAll() {
         let delay = 0;
-        this.cardsElements.forEach(element => {
+        this.cards.forEach(element => {
             setTimeout(() => {
                 element.classList.add('visible');
             }, delay);
             delay += 50;
         })
         this.selectedImages = [];
-        console.log(this.selectedImages);
     }
 
 
     move() {
         const [first, second] = this.selectedImages;
 
-        this.component.action('move');
+        this.component.action('move', {
+            'cardAId' : first.id,
+            'cardBId' : second.id,
+        });
 
         let firstIsMain = first.dataset.isMain === 'true';
         let secondIsMain = second.dataset.isMain === 'true';
 
         if(firstIsMain && secondIsMain){
             this.win();
-            return;
         }
 
 
-        if (first.id !== second.id) {
-            this.component.action('updatePv', {value: -1}).then(() => {
-                this.pv = this.component.valueStore.get('pv');
-                console.log(this.pv)
-                if (this.pv === 0) {
-                    this.lose();
-                }
-            })
-        }
+        // if (first.id !== second.id) {
+        //     this.component.action('updatePv', {value: -1}).then(() => {
+        //         this.pv = this.component.valueStore.get('pv');
+        //         console.log(this.pv)
+        //         if (this.pv === 0) {
+        //             this.lose();
+        //         }
+        //     })
+        // }
     }
 
     lose() {

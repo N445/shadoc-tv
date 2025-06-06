@@ -1,0 +1,155 @@
+.cards{
+    width: 100%;
+    display: grid;
+    gap: 1rem;
+
+    .card-wrapper {
+        background-color: transparent;
+        width: 100%;
+        aspect-ratio: 1;
+        perspective: 1000px;
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+            transform-style: preserve-3d;
+            transform: rotateY(0);
+        }
+
+        &.visible {
+            .card-inner {
+                transform: rotateY(180deg);
+            }
+        }
+
+        .back-game-card,.front-game-card{
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            backface-visibility: hidden;
+        }
+
+        .back-game-card {
+            background-color: #2c3e50;
+            border-radius: 8px;
+            z-index: 2;
+        }
+
+        .front-game-card {
+            z-index: 1;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+
+            &:hover {
+                cursor: pointer;
+
+                img {
+                    transform: scale(1.02);
+                }
+            }
+        }
+    }
+
+    // Configuration de base pour petit écran ou peu de cartes
+    grid-template-columns: repeat(2, 1fr);
+
+    // Calcul dynamique pour s'assurer que les cartes restent dans 100vh
+    @media (min-width: 576px) {
+        // Pour 2-4 cartes
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 768px) {
+        // Pour 4-8 cartes
+        grid-template-columns: repeat(auto-fit, minmax(calc((100vh - 3rem) / 4), 1fr));
+    }
+
+    @media (min-width: 992px) {
+        // Pour 6-12 cartes
+        grid-template-columns: repeat(auto-fit, minmax(calc((100vh - 4rem) / 6), 1fr));
+    }
+
+    @media (min-width: 1200px) {
+        // Pour plus de cartes
+        grid-template-columns: repeat(auto-fit, minmax(calc((100vh - 5rem) / 8), 1fr));
+    }
+
+    //max-height: 60vh;
+
+    // Adaptation basée sur le nombre de cartes
+    &[data-cards="2"] {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    &[data-cards="4"] {
+        grid-template-columns: repeat(2, 1fr);
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    &[data-cards="6"] {
+        grid-template-columns: repeat(2, 1fr);
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    &[data-cards="8"] {
+        grid-template-columns: repeat(2, 1fr);
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    &[data-cards="10"], &[data-cards="12"] {
+        grid-template-columns: repeat(2, 1fr);
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        @media (min-width: 992px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    &[data-cards="14"], &[data-cards="16"] {
+        grid-template-columns: repeat(2, 1fr);
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        @media (min-width: 992px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        @media (min-width: 1200px) {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+}
+
+
+.game-container {
+    max-width: 50%;
+    height: 60vh;
+    padding: 1rem;
+    //display: flex;
+    //flex-direction: column;
+    //align-items: center;
+    //justify-content: center;
+
+    .game-cards {
+        width: 100%;
+        height: 100%;
+
+
+    }
+}

@@ -16,6 +16,37 @@ class CardRepository extends ServiceEntityRepository
         parent::__construct($registry, Card::class);
     }
 
+    public function getCardsByIds(array $ids)
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function getNbCards(int $limit): array
+    {
+        return array_merge(
+            $this->createQueryBuilder('i')
+                 ->andWhere('i.isMain = :isMain')
+                 ->setParameter('isMain', true)
+                 ->setMaxResults(1)
+                 ->getQuery()
+                 ->getResult()
+            ,
+            $this->createQueryBuilder('i')
+                 ->andWhere('i.isMain = :isMain')
+                 ->orWhere('i.isMain IS NULL')
+                 ->setParameter('isMain', false)
+                 ->setMaxResults($limit - 1)
+                 ->getQuery()
+                 ->getResult()
+            ,
+        );
+    }
+
     //    /**
     //     * @return Card[] Returns an array of Card objects
     //     */

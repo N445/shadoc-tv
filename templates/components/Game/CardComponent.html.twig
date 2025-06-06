@@ -1,20 +1,44 @@
-<div{{ attributes.defaults(stimulus_controller('game--card'))  }}>
-<div class="row">
-    <div class="col-md-4">
-        <div class="input-group mb-3">
+<div{{ attributes.defaults(stimulus_controller('game--card')) }}>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="input-group mb-3">
+                <form name="start-party-form">
+                    <div class="d-flex">
+                        <select class="form-select players" name="playerName">
+                            {% for player in players %}
+                                <option value="{{ player.username }}">{{ player.username }}</option>
+                            {% endfor %}
+                        </select>
 
-
-            <select class="form-select players">
-                {% for player in this.players %}
-                    <option value="{{ player.username }}">{{ player.username }}</option>
-                {% endfor %}
-            </select>
-
-
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-                Button
-            </button>
+                        <button class="btn btn-outline-secondary" type="submit">
+                            Start Game
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
+
+    {% if party %}
+        partie démarré
+
+        <div class="cards" data-cards="{{ party.cards|length }}" data-skip-morph>
+            {% for card in party.cards %}
+                <div id="{{ card.id }}" class="card-wrapper" data-is-main="{{ card.isMain?'true':'false' }}">
+                    <div class="card-inner">
+                        <div class="back-game-card"></div>
+                        <div class="front-game-card">
+                            <img src="{{ vich_uploader_asset(card) }}" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% endif %}
+    {{ dump(party) }}
+    {% if party %}
+        {{ dump(party.cards) }}
+
+    {% endif %}
 </div>

@@ -18,17 +18,18 @@ class Card
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['game:card'])]
     private ?int $id = null;
 
     #[Vich\UploadableField(mapping: 'game', fileNameProperty: 'imageName')]
     private ?File $imageFile = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['game_settings_image:read'])]
+    #[Groups(['game:card'])]
     private ?string $imageName = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['game_settings_image:read'])]
+    #[Groups(['game:card'])]
     private ?bool $isMain = false;
 
     public function __toString(): string
@@ -39,6 +40,12 @@ class Card
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?int $id): Card
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function setImageFile(?File $imageFile = null): void

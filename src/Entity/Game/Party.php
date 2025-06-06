@@ -2,8 +2,9 @@
 
 namespace App\Entity\Game;
 
-use App\Repository\PartyRepository;
+use App\Repository\Game\PartyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PartyRepository::class)]
 class Party
@@ -11,22 +12,34 @@ class Party
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['game:card'])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['game:card'])]
     private ?\DateTime $startAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['game:card'])]
     private ?\DateTime $endAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['game:card'])]
     private ?int $nbCards = null;
 
     #[ORM\Column]
+    #[Groups(['game:card'])]
     private ?int $nbMoves = 0;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $player = null;
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'parties')]
+    #[Groups(['game:card'])]
+    private ?Player $player = null;
+
+    /**
+     * @var Card[]|null
+     */
+    #[Groups(['game:card'])]
+    private ?array $cards = null;
 
     public function getId(): ?int
     {
@@ -88,15 +101,25 @@ class Party
         return $this;
     }
 
-    public function getPlayer(): ?string
+    public function getPlayer(): ?Player
     {
         return $this->player;
     }
 
-    public function setPlayer(?string $player): static
+    public function setPlayer(?Player $player): static
     {
         $this->player = $player;
 
         return $this;
+    }
+
+    public function getCards(): ?array
+    {
+        return $this->cards;
+    }
+
+    public function setCards(?array $cards): void
+    {
+        $this->cards = $cards;
     }
 }
